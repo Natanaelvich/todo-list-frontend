@@ -2,12 +2,13 @@
 /* eslint-disable no-underscore-dangle */
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import PropTypes from 'prop-types';
 
 import api from '../../services/api';
 
 import { Container, ListTodo, StyledLink, Remove, Edit } from './styles';
 
-export default function Todo() {
+function Todo({ history }) {
   const [todos, setTodos] = useState([]);
 
   useEffect(() => {
@@ -29,18 +30,24 @@ export default function Todo() {
       });
     window.location.reload(false);
   }
+
+  function handleUpdate(todo) {
+    history.push({ pathname: '/update', state: { todo } });
+  }
   return (
     <Container>
       <ListTodo>
         {todos.map(todo => (
           <li key={String(todo._id)}>
             <h1>{todo.description}</h1>
-            <input type="checkbox" name="" id="" checked={todo.done} />
+            <input type="checkbox" name="" id="" defaultChecked={todo.done} />
             <div>
               <Remove type="button" onClick={() => handleDelete(todo._id)}>
                 remover
               </Remove>
-              <Edit type="button">editar</Edit>
+              <Edit type="button" onClick={() => handleUpdate(todo)}>
+                editar
+              </Edit>
             </div>
           </li>
         ))}
@@ -50,3 +57,10 @@ export default function Todo() {
     </Container>
   );
 }
+Todo.propTypes = {
+  history: PropTypes.shape({
+    push: PropTypes.func.isRequired,
+  }).isRequired,
+};
+
+export default Todo;

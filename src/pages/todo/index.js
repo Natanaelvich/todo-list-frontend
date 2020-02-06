@@ -1,5 +1,7 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-underscore-dangle */
 import React, { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
 import api from '../../services/api';
 
@@ -15,15 +17,29 @@ export default function Todo() {
     }
     loadTodos();
   }, []);
+
+  async function handleDelete(id) {
+    await api
+      .delete(`/todo/${id}`)
+      .then(() => {
+        toast.success('removido com sucesso');
+      })
+      .catch(err => {
+        toast.error(`erro ao remover: ${err}`);
+      });
+    window.location.reload(false);
+  }
   return (
     <Container>
       <ListTodo>
         {todos.map(todo => (
           <li key={String(todo._id)}>
             <h1>{todo.description}</h1>
-            <input type="checkbox" name="" id="" checked={todo.done} onChange={txt => {}} />
+            <input type="checkbox" name="" id="" checked={todo.done} />
             <div>
-              <Remove type="button">remover</Remove>
+              <Remove type="button" onClick={() => handleDelete(todo._id)}>
+                remover
+              </Remove>
               <Edit type="button">editar</Edit>
             </div>
           </li>
